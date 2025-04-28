@@ -1,0 +1,42 @@
+# ========== Fichiers spécifiques aux IDEs Java ==========
+
+# Eclipse
+.classpath
+.project
+.settings/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+out/
+
+# NetBeans
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+# VS Code
+.vscode/
+
+# ========== Fichiers générés par la compilation Java ==========
+bin/
+*.class
+target/
+out/
+build/
+
+# ========== Fichiers système ==========
+.DS_Store
+Thumbs.db
+
+# ========== Fichiers liés à Maven ==========
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
+
+# ========== Fichiers de logs et caches ==========
+*.log
