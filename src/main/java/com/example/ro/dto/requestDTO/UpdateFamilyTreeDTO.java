@@ -19,5 +19,4 @@ public class UpdateFamilyTreeDTO {
 
     private String creator;
 
-    private Boolean isPrivate;
 }

@@ -4,16 +4,21 @@ import com.example.ro.dto.responseDTO.ApiError;
 import com.example.ro.dto.requestDTO.PersonDTO;
 import com.example.ro.dto.requestDTO.UpdatePersonDTO;
 import com.example.ro.services.PersonService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/persons")
-@AllArgsConstructor
 public class PersonController {
 
-
     private final PersonService personService;
+
+    public PersonController(PersonService personService) {
+        this.personService = personService;
+    }
+
+
 
 
     @GetMapping("/{id}")
@@ -22,7 +27,7 @@ public class PersonController {
     }
 
     @PostMapping
-    public ApiError createPerson(@RequestBody PersonDTO dto) {
+    public ApiError createPerson(@Valid @RequestBody PersonDTO dto) {
         return personService.createPerson(dto);
     }
 

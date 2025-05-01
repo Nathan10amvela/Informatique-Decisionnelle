@@ -4,6 +4,8 @@ import com.example.ro.enumeration.Gender;
 import com.example.ro.enumeration.Role;
 import lombok.Data;
 
+import java.sql.Date;
+
 @Data
 public class UpdatePersonDTO {
 
@@ -11,11 +13,10 @@ public class UpdatePersonDTO {
 
     private String firstName;
 
-    //private Instant birthDate;
+    private String birthDate;
 
     private String birthPlace;
 
     private Gender gender;
 
-    private Role role;
 }

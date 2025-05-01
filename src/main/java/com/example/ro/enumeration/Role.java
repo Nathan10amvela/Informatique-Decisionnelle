@@ -7,10 +7,16 @@ public enum Role {
     UNCLE,
     AUNT,
     COUSIN,
+    COUSINE,
     BROTHER,
     SISTER,
     FATHER,
     MOTHER,
     NEPHEW,
-    NIECE
+    NIECE,
+    SON,
+    DAUGHTER,
+    CONJOINT,
+    GRANDSON,
+    GRANDDAUGHTER,
 }

@@ -2,12 +2,13 @@ package com.example.ro.models;
 
 
 
+import com.example.ro.enumeration.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -18,18 +19,24 @@ public class FamilyLink {
     private int id;
 
     private int weight;
-    private String relationType;
+
+    @Enumerated(EnumType.STRING)
+    private Role relationType;
+
 
     @ManyToOne
     @JoinColumn(name = "source_id", nullable = false)
+    @JsonBackReference("PersonSource")
     private Person source;
 
     @ManyToOne
     @JoinColumn(name = "target_id", nullable = false)
+    @JsonBackReference("targetPerson")
     private Person target;
 
     @ManyToOne
     @JoinColumn(name = "tree_id", nullable = false)
+    @JsonBackReference("familyTree")
     private FamilyTree familyTree;
 }
 

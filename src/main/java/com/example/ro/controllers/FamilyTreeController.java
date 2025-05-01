@@ -5,6 +5,7 @@ import com.example.ro.dto.requestDTO.FamilyTreeDTO;
 import com.example.ro.dto.requestDTO.UpdateFamilyTreeDTO;
 import com.example.ro.dto.responseDTO.ApiError;
 import com.example.ro.services.FamilyTreeService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,7 +18,7 @@ public class FamilyTreeController {
     private final FamilyTreeService familyTreeService;
 
     @PostMapping
-    public ApiError createFamilyTree(@RequestBody FamilyTreeDTO dto) {
+    public ApiError createFamilyTree( @Valid @RequestBody FamilyTreeDTO dto) {
         return familyTreeService.createFamilyTree(dto);
     }
 

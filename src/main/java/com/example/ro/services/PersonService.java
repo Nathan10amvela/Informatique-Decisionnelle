@@ -3,7 +3,9 @@ package com.example.ro.services;
 import com.example.ro.dto.responseDTO.ApiError;
 import com.example.ro.dto.requestDTO.PersonDTO;
 import com.example.ro.dto.requestDTO.UpdatePersonDTO;
+import com.example.ro.models.FamilyTree;
 import com.example.ro.models.Person;
+import com.example.ro.repositories.FamilyTreeRepository;
 import com.example.ro.repositories.PersonRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class PersonService {
 
     private final PersonRepository personRepository;
+    private final FamilyTreeRepository familyTreeRepository;
 
     public ApiError getPersonById(int id) {
         ApiError apiError = new ApiError();
@@ -25,7 +28,6 @@ public class PersonService {
             apiError.setValue("200");
             return apiError;
         }
-        apiError.setData(null);
         apiError.setText("not found");
         apiError.setValue("404");
         return apiError;
@@ -38,10 +40,18 @@ public class PersonService {
         Person person = new Person();
 
         person.setFirstName(dto.getFirstName());
-        person.setFirstName(dto.getFirstName());
+        person.setLastName(dto.getLastName());
+        person.setBirthDate(dto.getBirthDate());
         person.setBirthPlace(dto.getBirthPlace());
         person.setGender(dto.getGender());
-        person.setRole(dto.getRole());
+
+//        Optional<FamilyTree> optionalFamilyTree = familyTreeRepository.findById(dto.getFamilyTreeId());
+//        if (optionalFamilyTree.isEmpty()){
+//            apiError.setText("Family tree not found.");
+//            apiError.setValue("404");
+//            return apiError;
+//        }
+//        person.setFamilyTree(optionalFamilyTree.get());
 
         Person savedPerson = personRepository.save(person);
         apiError.setValue("201");
@@ -58,9 +68,7 @@ public class PersonService {
             if (dto.getFirstName() != null) {
                 person.setFirstName(dto.getFirstName());
             }
-            if (dto.getRole() != null){
-                person.setRole(dto.getRole());
-            }
+
             if (dto.getGender() != null) {
                 person.setGender(dto.getGender());
             }
@@ -69,6 +77,9 @@ public class PersonService {
             }
             if( dto.getBirthPlace() != null) {
                 person.setBirthPlace(dto.getBirthPlace());
+            }
+            if(dto.getBirthDate() != null) {
+                person.setBirthDate(dto.getBirthDate());
             }
 
             Person savedperson = personRepository.save(person);

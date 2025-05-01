@@ -5,6 +5,7 @@ import com.example.ro.dto.requestDTO.UpdateFamilyTreeDTO;
 import com.example.ro.dto.responseDTO.ApiError;
 import com.example.ro.models.FamilyTree;
 import com.example.ro.repositories.FamilyTreeRepository;
+import com.example.ro.repositories.PersonRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.time.Instant;
 public class FamilyTreeService {
 
     private final FamilyTreeRepository familyTreeRepository;
-
+    private final PersonRepository personRepository;
 
 
     public ApiError createFamilyTree(FamilyTreeDTO dto) {
@@ -23,14 +24,14 @@ public class FamilyTreeService {
 
         FamilyTree familyTree = new FamilyTree();
         familyTree.setName(dto.getName());
-        familyTree.setCreator(dto.getCreator());
         familyTree.setDescription(dto.getDescription());
         familyTree.setGeographicOrigin(dto.getGeographicOrigin());
         familyTree.setCreationDate(Instant.now());
         familyTree.setLastModifiedDate(Instant.now());
-        familyTree.setPrivate(dto.getIsPrivate());
+        familyTree.setCreator(dto.getCreator());
 
         FamilyTree saved = familyTreeRepository.save(familyTree);
+
         if (saved != null) {
             apiError.setValue("200");
             apiError.setText("Family tree created successfully");
@@ -65,9 +66,6 @@ public class FamilyTreeService {
 
         familyTree.setLastModifiedDate(Instant.now());
 
-        if (dto.getIsPrivate() != null){
-            familyTree.setPrivate(dto.getIsPrivate());
-        }
 
         FamilyTree updated = familyTreeRepository.save(familyTree);
         if (updated != null) {
