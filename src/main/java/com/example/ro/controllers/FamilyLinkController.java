@@ -35,6 +35,11 @@ public class FamilyLinkController {
         return familyLinkService.deleteLink(id);
     }
 
+    @GetMapping("/family-tree/{id}")
+    public ApiError getLinksByTreeId(@PathVariable int id) {
+        return familyLinkService.getLinksByTreeId(id);
+    }
+
 
     //    @GetMapping("/bellman_ford")
 //    public ApiError getShortestPathByBellmanFord(@RequestParam int startId, @RequestParam int endId, @RequestParam int familyTreeId) {

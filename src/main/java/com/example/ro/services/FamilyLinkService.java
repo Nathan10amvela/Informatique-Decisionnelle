@@ -251,4 +251,34 @@ public class FamilyLinkService {
         apiError.setValue("204");
         return apiError;
     }
+
+    public ApiError getLinksByTreeId(int id) {
+        ApiError apiError = new ApiError();
+
+        Optional<FamilyTree> optionalFamilyTree = familyTreeRepository.findById(id);
+        if(optionalFamilyTree.isEmpty()){
+            apiError.setValue("404");
+            apiError.setText("Tree not found");
+        }
+
+        List<FamilyLink> links = familyLinkRepository.findByFamilyTreeId(id);
+        List<PathStepDTO> pathStepDTOS = new ArrayList<>();
+
+        for (FamilyLink link : links) {
+            PathStepDTO pathStepDTO = new PathStepDTO();
+
+            pathStepDTO.setRelationType(link.getRelationType());
+            pathStepDTO.setWeight(link.getWeight());
+            pathStepDTO.setFromPerson(link.getSource().getLastName() + " " + link.getSource().getFirstName());
+            pathStepDTO.setToPerson(link.getTarget().getLastName() + " " + link.getTarget().getFirstName());
+
+            pathStepDTOS.add(pathStepDTO);
+        }
+
+        apiError.setData(pathStepDTOS);
+        apiError.setValue("200");
+        apiError.setText("links get successfully");
+
+        return apiError;
+    }
 }
