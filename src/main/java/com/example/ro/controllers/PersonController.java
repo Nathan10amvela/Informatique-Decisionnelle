@@ -41,6 +41,7 @@ public class PersonController {
         return personService.deletePerson(id);
     }
 
-    //TODO il faut créer la route qui doit permettre d'inviter un membre
+    @GetMapping("/family-tree/{id}")
+    public ApiError getPersonsByTreeId(@PathVariable int id) {return personService.getPersonsByTreeId(id); }
 }
 

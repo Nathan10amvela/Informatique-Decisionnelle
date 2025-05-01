@@ -3,6 +3,8 @@ package com.example.ro.services;
 import com.example.ro.dto.requestDTO.LinkDTO;
 import com.example.ro.dto.requestDTO.UpdateLinkDTO;
 import com.example.ro.dto.responseDTO.ApiError;
+import com.example.ro.dto.responseDTO.PathStepDTO;
+import com.example.ro.dto.responseDTO.FamilyPathDTO;
 import com.example.ro.enumeration.Role;
 import com.example.ro.models.FamilyLink;
 import com.example.ro.models.FamilyTree;
@@ -46,11 +48,12 @@ public class FamilyLinkService {
         }
 
         Person source = new Person();
+        Person target = new Person();
+
         if (dto.getId_source() > 0 ) {
             Optional<Person> optionalPerson = personRepository.findById(dto.getId_source());
             if (optionalPerson.isPresent()) {
                 link.setSource(optionalPerson.get());
-                source = optionalPerson.get();
             } else {
                 apiError.setText("user not found");
                 apiError.setValue("404");
@@ -67,22 +70,37 @@ public class FamilyLinkService {
             link.setSource(source);
         }
 
-        Person target = new Person();
-        target.setFirstName(dto.getTarget().getFirstName());
-        target.setLastName(dto.getTarget().getLastName());
-        target.setBirthDate(dto.getTarget().getBirthDate());
-        target.setBirthPlace(dto.getTarget().getBirthPlace());
-        target.setGender(dto.getTarget().getGender());
-        target.setFamilyTree(optionalFamilyTree.get());
-        target = personRepository.save(target);
-        link.setTarget(target);
-
+        if (dto.getId_target() > 0 ) {
+            Optional<Person> optionalPerson = personRepository.findById(dto.getId_target());
+            if (optionalPerson.isPresent()) {
+                link.setTarget(optionalPerson.get());
+            } else {
+                apiError.setText("user not found");
+                apiError.setValue("404");
+                return apiError;
+            }
+        } else {
+            target.setFirstName(dto.getTarget().getFirstName());
+            target.setLastName(dto.getTarget().getLastName());
+            target.setBirthDate(dto.getTarget().getBirthDate());
+            target.setBirthPlace(dto.getTarget().getBirthPlace());
+            target.setGender(dto.getTarget().getGender());
+            target.setFamilyTree(optionalFamilyTree.get());
+            target = personRepository.save(target);
+            link.setTarget(target);
+        }
 
 
         FamilyLink saved = familyLinkRepository.save(link);
 
+        PathStepDTO pathStepDTO = new PathStepDTO();
+        pathStepDTO.setFromPerson(saved.getSource().getLastName() + " " + saved.getSource().getFirstName());
+        pathStepDTO.setToPerson(saved.getTarget().getLastName() + " " + saved.getTarget().getFirstName());
+        pathStepDTO.setWeight(saved.getWeight());
+        pathStepDTO.setRelationType(saved.getRelationType());
+
         apiError.setText("link created successfully");
-        apiError.setData(saved);
+        apiError.setData(pathStepDTO);
         apiError.setValue("200");
 
         return apiError;
@@ -100,10 +118,9 @@ public class FamilyLinkService {
 
     //Algorithme de Dijkstra
     public ApiError findShortestPathByDijkstra(int familyTreeId, int startPersonId, int endPersonId) {
+        Map<Integer, List<FamilyLink>> adjacencyList = new HashMap<>();
 
         ApiError apiError = new ApiError() ;
-
-        Map<Integer, List<FamilyLink>> adjacencyList = new HashMap<>();
 
         Optional<Person> optionalStartPerson = personRepository.findById(startPersonId);
         Optional<Person> optionalEndPerson = personRepository.findById(endPersonId);
@@ -114,14 +131,14 @@ public class FamilyLinkService {
             return apiError;
         }
 
-
-        // 1️⃣ Construire la liste d'adjacence pour le tree donné
+        // 1️⃣ Construire la liste d'adjacence
         List<FamilyLink> allLinks = familyLinkRepository.findByFamilyTreeId(familyTreeId);
         for (FamilyLink link : allLinks) {
             adjacencyList
                     .computeIfAbsent(link.getSource().getId(), k -> new ArrayList<>())
                     .add(link);
         }
+            System.out.println(adjacencyList);
 
         // 2️⃣ Initialisation
         Map<Integer, Integer> distances = new HashMap<>();
@@ -159,17 +176,33 @@ public class FamilyLinkService {
             }
         }
 
-        // 4️⃣ Reconstruire le chemin
-        List<Person> path = new ArrayList<>();
+        // 4️⃣ Reconstruire le chemin détaillé
+        List<PathStepDTO> pathSteps = new ArrayList<>();
+        int totalWeight = 0;
         Integer currentId = endPersonId;
-        while (currentId != null) {
-            path.add(personRepository.findById(currentId).orElseThrow());
-            currentId = previous.get(currentId);
+
+        while (previous.containsKey(currentId)) {
+            int prevId = previous.get(currentId);
+
+            FamilyLink link = familyLinkRepository
+                    .findBySourceIdAndTargetIdAndFamilyTreeId(prevId, currentId, familyTreeId)
+                    .orElseThrow();
+
+            pathSteps.add(new PathStepDTO(
+                    personRepository.findById(prevId).get().getFirstName() + " " + personRepository.findById(prevId).get().getLastName(),
+                    personRepository.findById(currentId).get().getFirstName() + " " + personRepository.findById(currentId).get().getLastName(),
+                    link.getRelationType(),
+                    link.getWeight()
+            ));
+
+            totalWeight += link.getWeight();
+            currentId = prevId;
         }
 
-        Collections.reverse(path);
+        Collections.reverse(pathSteps);
 
-        apiError.setData(path);
+
+        apiError.setData(new FamilyPathDTO(pathSteps, totalWeight));
         apiError.setValue("200");
         apiError.setText("the shortest link get successfully");
         return apiError;

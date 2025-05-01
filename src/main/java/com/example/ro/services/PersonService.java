@@ -3,6 +3,7 @@ package com.example.ro.services;
 import com.example.ro.dto.responseDTO.ApiError;
 import com.example.ro.dto.requestDTO.PersonDTO;
 import com.example.ro.dto.requestDTO.UpdatePersonDTO;
+import com.example.ro.dto.responseDTO.PersonResponseDTO;
 import com.example.ro.models.FamilyTree;
 import com.example.ro.models.Person;
 import com.example.ro.repositories.FamilyTreeRepository;
@@ -10,6 +11,8 @@ import com.example.ro.repositories.PersonRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -108,6 +111,37 @@ public class PersonService {
         apiError.setData(null);
         apiError.setText("not found");
         apiError.setValue("404");
+        return apiError;
+    }
+
+    public ApiError getPersonsByTreeId(int id) {
+        ApiError apiError = new ApiError();
+
+        FamilyTree familyTree = familyTreeRepository.findById(id).orElse(null);
+        if (familyTree == null) {
+            apiError.setValue("404");
+            apiError.setText("Family tree not found");
+            return apiError;
+        }
+
+        List<Person> people = personRepository.findByFamilyTreeId(familyTree.getId());
+
+        List<PersonResponseDTO> personDTOS =new ArrayList<>();
+
+        for (Person person : people) {
+            PersonResponseDTO personResponseDTO = new PersonResponseDTO();
+            personResponseDTO.setId(person.getId());
+            personResponseDTO.setFirstName(person.getFirstName());
+            personResponseDTO.setLastName(person.getLastName());
+            personResponseDTO.setGender(person.getGender());
+            personResponseDTO.setBirthDate(person.getBirthDate());
+            personResponseDTO.setBirthPlace(personResponseDTO.getBirthPlace());
+            personDTOS.add(personResponseDTO);
+        }
+        apiError.setData(personDTOS);
+        apiError.setText("people get successfuly");
+        apiError.setValue("200");
+
         return apiError;
     }
 }

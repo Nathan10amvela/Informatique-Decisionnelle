@@ -19,7 +19,8 @@ public class LinkDTO {
 
     private PersonDTO source;
 
-    @NotNull(message = "Target person cannot be null.")
+    private int id_target;
+
     private PersonDTO target;
 
     @Positive(message = "Family tree ID must be a positive number.")
