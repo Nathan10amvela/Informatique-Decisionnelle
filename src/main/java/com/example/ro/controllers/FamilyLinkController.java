@@ -40,9 +40,19 @@ public class FamilyLinkController {
         return familyLinkService.getLinksByTreeId(id);
     }
 
+     @GetMapping("/bellman_ford")
+    public ApiError getShortestPathByBellmanFord(@RequestParam int startId, @RequestParam int endId, @RequestParam int familyTreeId) {
+        return familyLinkService.bellmanFordInTreeDetailed(familyTreeId, startId, endId);
+   }
 
-    //    @GetMapping("/bellman_ford")
-//    public ApiError getShortestPathByBellmanFord(@RequestParam int startId, @RequestParam int endId, @RequestParam int familyTreeId) {
-//        return familyLinkService.findShortestPathByBellmanFord(familyTreeId, startId, endId);
-//    }
+    @GetMapping("/prim/tree")
+    public ApiError getPrimTree(@RequestParam int treeId) {
+        return familyLinkService.primTreeDetailed(treeId);
+    }
+
+    @GetMapping("/kruskal/tree")
+    public ApiError getKruskalTree(@RequestParam int treeId) {
+        return familyLinkService.kruskalTreeDetailed(treeId);
+    }
+
 }

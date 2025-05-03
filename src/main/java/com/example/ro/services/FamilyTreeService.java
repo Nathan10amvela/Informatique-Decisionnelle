@@ -6,10 +6,12 @@ import com.example.ro.dto.responseDTO.ApiError;
 import com.example.ro.models.FamilyTree;
 import com.example.ro.repositories.FamilyTreeRepository;
 import com.example.ro.repositories.PersonRepository;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -96,5 +98,20 @@ public class FamilyTreeService {
         apiError.setText("Family tree deleted successfully");
         return apiError;
 
+    }
+
+    public ApiError getTree(int id) {
+        ApiError apiError = new ApiError();
+
+        Optional<FamilyTree> optionalFamilyTree = familyTreeRepository.findById(id);
+        if (optionalFamilyTree.isEmpty()){
+            apiError.setText("tree not found");
+            apiError.setValue("404");
+            return apiError;
+        }
+        apiError.setData(optionalFamilyTree.get());
+        apiError.setText("Tree get successfully");
+        apiError.setValue("200");
+        return apiError;
     }
 }

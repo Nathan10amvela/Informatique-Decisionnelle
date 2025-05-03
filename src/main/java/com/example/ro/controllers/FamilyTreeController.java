@@ -21,6 +21,10 @@ public class FamilyTreeController {
     public ApiError createFamilyTree( @Valid @RequestBody FamilyTreeDTO dto) {
         return familyTreeService.createFamilyTree(dto);
     }
+    @GetMapping("/{id}")
+    public ApiError getTree(@PathVariable int id) {
+        return familyTreeService.getTree(id);
+    }
 
     @PatchMapping("/{id}")
     public ApiError updateFamilyTree(@PathVariable int id, @RequestBody UpdateFamilyTreeDTO dto) {

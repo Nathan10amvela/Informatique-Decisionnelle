@@ -16,6 +16,7 @@ import com.example.ro.repositories.PersonRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.function.Function;
 
 @Service
 public class FamilyLinkService {
@@ -281,4 +282,234 @@ public class FamilyLinkService {
 
         return apiError;
     }
+
+    //bellman-ford
+    public ApiError bellmanFordInTreeDetailed(int familyTreeId, int startPersonId, int endPersonId) {
+        List<FamilyLink> allLinks = familyLinkRepository.findByFamilyTreeId(familyTreeId);
+        List<Person> people = personRepository.findByFamilyTreeId(familyTreeId);
+
+        ApiError apiError = new ApiError() ;
+
+        Optional<Person> optionalStartPerson = personRepository.findById(startPersonId);
+        Optional<Person> optionalEndPerson = personRepository.findById(endPersonId);
+
+        if (optionalStartPerson.isEmpty() || optionalEndPerson.isEmpty() ){
+            apiError.setText("user not found");
+            apiError.setValue("404");
+            return apiError;
+        }
+
+        Map<Integer, Integer> distances = new HashMap<>();
+        Map<Integer, Integer> previous = new HashMap<>();
+
+        // Initialisation
+        for (Person person : people) {
+            distances.put(person.getId(), Integer.MAX_VALUE);
+        }
+        distances.put(startPersonId, 0);
+
+        int size = people.size();
+
+        // Bellman-Ford : relaxation (|V| - 1) fois
+        for (int i = 0; i < size - 1; i++) {
+            for (FamilyLink link : allLinks) {
+                int u = link.getSource().getId();
+                int v = link.getTarget().getId();
+                int weight = link.getWeight();
+
+                if (distances.get(u) != Integer.MAX_VALUE && distances.get(u) + weight < distances.get(v)) {
+                    distances.put(v, distances.get(u) + weight);
+                    previous.put(v, u);
+                }
+            }
+        }
+
+        // Détection de cycle négatif
+        for (FamilyLink link : allLinks) {
+            int u = link.getSource().getId();
+            int v = link.getTarget().getId();
+            int weight = link.getWeight();
+
+            if (distances.get(u) != Integer.MAX_VALUE && distances.get(u) + weight < distances.get(v)) {
+                throw new RuntimeException("Cycle négatif détecté dans l’arbre généalogique !");
+            }
+        }
+
+        // Reconstruire le chemin détaillé
+        List<PathStepDTO> pathSteps = new ArrayList<>();
+        int totalWeight = 0;
+        Integer currentId = endPersonId;
+
+        while (previous.containsKey(currentId)) {
+            int prevId = previous.get(currentId);
+
+            Integer finalCurrentId = currentId;
+            FamilyLink link = familyLinkRepository
+                    .findBySourceIdAndTargetIdAndFamilyTreeId(prevId, currentId, familyTreeId)
+                    .orElseThrow(() -> new RuntimeException("Lien introuvable entre " + prevId + " et " + finalCurrentId));
+
+            String fromName = personRepository.findById(prevId).get().getFirstName() + " " +
+                    personRepository.findById(prevId).get().getLastName();
+            String toName = personRepository.findById(currentId).get().getFirstName() + " " +
+                    personRepository.findById(currentId).get().getLastName();
+
+            pathSteps.add(new PathStepDTO(
+                    fromName,
+                    toName,
+                    link.getRelationType(),
+                    link.getWeight()
+            ));
+
+            totalWeight += link.getWeight();
+            currentId = prevId;
+        }
+
+        Collections.reverse(pathSteps);
+
+        apiError.setData(new FamilyPathDTO(pathSteps, totalWeight));
+        apiError.setValue("200");
+        apiError.setText("the shortest link get successfully");
+        return apiError;
+    }
+
+
+    //Prim
+    public ApiError primTreeDetailed(int familyTreeId) {
+        ApiError apiError = new ApiError();
+
+        Optional<FamilyTree> optionalFamilyTree = familyTreeRepository.findById(familyTreeId);
+        if (optionalFamilyTree.isEmpty() ){
+            apiError.setText("Tree not found");
+            apiError.setValue("404");
+            return apiError;
+        }
+
+        List<FamilyLink> allLinks = familyLinkRepository.findByFamilyTreeId(familyTreeId);
+        List<Person> people = personRepository.findByFamilyTreeId(familyTreeId);
+
+        if (people.isEmpty()) {
+            throw new RuntimeException("Aucune personne dans cet arbre.");
+        }
+
+        Set<Integer> visited = new HashSet<>();
+        PriorityQueue<FamilyLink> queue = new PriorityQueue<>(Comparator.comparingInt(FamilyLink::getWeight));
+        List<PathStepDTO> pathSteps = new ArrayList<>();
+        int totalWeight = 0;
+
+        // Démarre depuis la première personne
+        Person startPerson = people.get(0);
+        visited.add(startPerson.getId());
+
+        // Ajoute ses liens sortants
+        for (FamilyLink link : allLinks) {
+            if (link.getSource().getId() == startPerson.getId()) {
+                queue.add(link);
+            }
+        }
+
+        while (visited.size() < people.size() && !queue.isEmpty()) {
+            FamilyLink link = queue.poll();
+
+            int targetId = link.getTarget().getId();
+            if (visited.contains(targetId)) continue;
+
+            // Ajout du lien dans l'arbre couvrant
+            String fromName = link.getSource().getFirstName() + " " + link.getSource().getLastName();
+            String toName = link.getTarget().getFirstName() + " " + link.getTarget().getLastName();
+
+            pathSteps.add(new PathStepDTO(
+                    fromName,
+                    toName,
+                    link.getRelationType(),
+                    link.getWeight()
+            ));
+
+            totalWeight += link.getWeight();
+            visited.add(targetId);
+
+            // Ajoute les nouveaux liens sortants de la personne visitée
+            for (FamilyLink nextLink : allLinks) {
+                if (nextLink.getSource().getId() == targetId && !visited.contains(nextLink.getTarget().getId())) {
+                    queue.add(nextLink);
+                }
+            }
+        }
+
+        apiError.setData(new FamilyPathDTO(pathSteps, totalWeight));
+        apiError.setValue("200");
+        apiError.setText(" search does successfully");
+        return apiError;
+    }
+
+
+    public ApiError kruskalTreeDetailed(int familyTreeId) {
+
+        ApiError apiError = new ApiError();
+
+        Optional<FamilyTree> optionalFamilyTree = familyTreeRepository.findById(familyTreeId);
+        if (optionalFamilyTree.isEmpty() ){
+            apiError.setText("Tree not found");
+            apiError.setValue("404");
+            return apiError;
+        }
+
+        List<FamilyLink> allLinks = familyLinkRepository.findByFamilyTreeId(familyTreeId);
+        List<Person> people = personRepository.findByFamilyTreeId(familyTreeId);
+
+        if (people.isEmpty()) {
+            throw new RuntimeException("Aucune personne dans cet arbre.");
+        }
+
+        Map<Integer, Integer> parent = new HashMap<>();
+        for (Person p : people) {
+            parent.put(p.getId(), p.getId());
+        }
+
+        // Fonction find du Union-Find
+        Function<Integer, Integer> find = id -> {
+            while (!parent.get(id).equals(id)) {
+                parent.put(id, parent.get(parent.get(id))); // path compression
+                id = parent.get(id);
+            }
+            return id;
+        };
+
+        List<PathStepDTO> pathSteps = new ArrayList<>();
+        int totalWeight = 0;
+
+        // Trie des liens par poids
+        allLinks.sort(Comparator.comparingInt(FamilyLink::getWeight));
+
+        for (FamilyLink link : allLinks) {
+            int u = link.getSource().getId();
+            int v = link.getTarget().getId();
+
+            int parentU = find.apply(u);
+            int parentV = find.apply(v);
+
+            if (parentU != parentV) {
+                // Relie les deux arbres
+                parent.put(parentU, parentV);
+
+                String fromName = link.getSource().getFirstName() + " " + link.getSource().getLastName();
+                String toName = link.getTarget().getFirstName() + " " + link.getTarget().getLastName();
+
+                pathSteps.add(new PathStepDTO(
+                        fromName,
+                        toName,
+                        link.getRelationType(),
+                        link.getWeight()
+                ));
+
+                totalWeight += link.getWeight();
+            }
+        }
+
+        apiError.setData(new FamilyPathDTO(pathSteps, totalWeight));
+        apiError.setValue("200");
+        apiError.setText("the shortest link get successfully");
+        return apiError;
+    }
+
+
 }
