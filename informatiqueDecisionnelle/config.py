@@ -32,10 +32,10 @@ MODELS_CONFIG = {
     'KNN': {
         'model_name': 'KNN',
         'param_grid': {
-            'n_neighbors': [11, 13, 15, 100 , 10000 , 10000000],  # 3, 5, 7, 9,
+            'n_neighbors': [3, 5, 7, 9, 11, 13, 15, 100],  # 3, 5, 7, 9,
             'weights': [ 'distance' , 'uniform'],
-            'metric': ['minkowski'],  # euclidean', 'manhattan',
-            'p': [ 25 , 30 , 38 , 45 , 103]  # Paramètre pour Minkowski  1, 2, 3 , 4 , 5 , 
+            'metric': [ 'euclidean', 'manhattan', 'minkowski'],  # 
+            'p': [ 1, 2, 3 , 4 , 5 , 25 , 30]  # Paramètre pour Minkowski  1, 2, 3 , 4 , 5 , 
         }
     },
     'Random Forest': {

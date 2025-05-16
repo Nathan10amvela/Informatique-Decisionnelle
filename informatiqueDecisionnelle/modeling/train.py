@@ -786,7 +786,7 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
         cv=cv_folds,
         scoring=scoring,
         n_jobs=-1,
-        verbose=1
+        verbose=2
     )
     
     grid_search.fit(X_train_scaled, y_train)

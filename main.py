@@ -1,12 +1,4 @@
-"""
-### Projet: Prédiction de Maladies Cardiaques
-# Auteur: Wotchoko & Claude
-# Date: 15 Avril 2025
-
-Ce script principal coordonne l'ensemble du processus d'analyse et de prédiction
-des maladies cardiaques en utilisant plusieurs algorithmes de machine learning.
-"""
-
+# main.py modifié
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -21,24 +13,40 @@ from informatiqueDecisionnelle.plots import create_report_graphics, create_model
 def main():
     """
     Fonction principale qui exécute le workflow complet d'analyse et de prédiction
+    avec une division correcte des données.
     """
     print("\n" + "="*80)
-    print("🫀 ANALYSE PRÉDICTIVE DE MALADIES CARDIAQUES")
+    print("🫀 ANALYSE PRÉDICTIVE DE MALADIES CARDIAQUES (MÉTHODE CORRIGÉE)")
     print("="*80)
     
-    # 1. Chargement des données
+    # 1. Chargement des datasets correctement séparés
     print("\n📂 Chargement des datasets...")
-    train_df, test_df = load_datasets(
-        train_path='data/raw/Heart_disease_statlog.csv',  
-        test_path='data/raw/Heart_disease_cleveland_new.csv'
-    )
+    train_path = 'data/raw/Heart_disease_statlog_new_train_65pct.csv'
+    test_path = 'data/raw/Heart_disease_statlog_new_test_35pct.csv'
+    
+    # Vérifier si les fichiers existent déjà, sinon les créer
+    if not (os.path.exists(train_path) and os.path.exists(test_path)):
+        print("Fichiers séparés non trouvés. Division du dataset original...")
+        from split_data import split_and_save_data
+        
+        train_path, test_path = split_and_save_data(
+            'data/raw/Heart_disease_statlog.csv', 
+            train_ratio=0.7
+        )
+    
+    # Chargement des datasets séparés
+    train_df = pd.read_csv(train_path)
+    test_df = pd.read_csv(test_path)
+    
+    print(f"Ensemble d'entraînement: {len(train_df)} échantillons")
+    print(f"Ensemble de test: {len(test_df)} échantillons")
     
     # 2. Exploration et visualisation des données
-    train_df = explore_datasets(train_df, "Cleveland (Entraînement)")
-    test_df = explore_datasets(test_df, "Statlog (Test)")
+    train_df = explore_datasets(train_df, "Ensemble d'entraînement (65%)")
+    test_df = explore_datasets(test_df, "Ensemble de test (35%)")
     
-    visualize_data(train_df, "Dataset Cleveland")
-    visualize_data(test_df, "Dataset Statlog")
+    visualize_data(train_df, "Ensemble d'entraînement")
+    visualize_data(test_df, "Ensemble de test")
     
     # 3. Préparation des données
     X_train, X_test, X_train_scaled, X_test_scaled, y_train, y_test, scaler = prepare_data(
@@ -78,10 +86,11 @@ def main():
     }
     
     os.makedirs('models', exist_ok=True)
-    joblib.dump(model_artifacts, f"models/heart_disease_{best_model_name.lower().replace(' ', '_')}.joblib")
-    print(f"\n✅ Modèle sauvegardé sous 'models/heart_disease_{best_model_name.lower().replace(' ', '_')}.joblib'")
+    model_filename = f"models/heart_disease_{best_model_name.lower().replace(' ', '_')}_corrected.joblib"
+    joblib.dump(model_artifacts, model_filename)
+    print(f"\n✅ Modèle sauvegardé sous '{model_filename}'")
     
     print("\n✅ Analyse terminée avec succès!")
-    
+
 if __name__ == "__main__":
     main()

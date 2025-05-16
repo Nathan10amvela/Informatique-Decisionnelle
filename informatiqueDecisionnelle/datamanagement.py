@@ -5,6 +5,8 @@ Module de gestion des données pour le projet de prédiction de maladies cardiaq
 import pandas as pd
 import numpy as np
 
+# Modification de la fonction load_datasets dans informatiqueDecisionnelle/datamanagement.py
+
 def load_datasets(train_path, test_path):
     """
     Charge les datasets d'entraînement et de test
@@ -19,27 +21,26 @@ def load_datasets(train_path, test_path):
     print("\n📂 Chargement des datasets...")
     
     try:
-        # Dataset d'entraînement (Cleveland)
+        # Dataset d'entraînement
         train_df = pd.read_csv(train_path)
         print(f"✅ Dataset d'entraînement chargé avec succès: {train_path}")
+        print(f"   {len(train_df)} échantillons, {train_df.shape[1]} caractéristiques")
         
-        # Dataset de test (Statlog)
+        # Dataset de test
         test_df = pd.read_csv(test_path)
         print(f"✅ Dataset de test chargé avec succès: {test_path}")
+        print(f"   {len(test_df)} échantillons, {test_df.shape[1]} caractéristiques")
         
-        # Vérification que les colonnes correspondent
-        if not all(col in test_df.columns for col in train_df.columns):
-            print("⚠️ Attention: Les colonnes des deux datasets ne correspondent pas.")
-            print("Adaptation des colonnes en cours...")
-            
-            # Assurer que les colonnes des deux datasets sont alignées
-            # Cette partie serait développée selon la structure exacte des datasets
-            
     except FileNotFoundError as e:
         print(f"❌ Erreur: Fichier introuvable - {e}")
-        print("Utilisation du dataset Cleveland uniquement pour démonstration...")
-        train_df = pd.read_csv(train_path)
-        test_df = None
+        return None, None
+    
+    # Vérification rapide de la distribution des classes
+    print("\nDistribution des classes:")
+    print("Ensemble d'entraînement:")
+    print(train_df['target'].value_counts())
+    print("\nEnsemble de test:")
+    print(test_df['target'].value_counts())
     
     return train_df, test_df
 
