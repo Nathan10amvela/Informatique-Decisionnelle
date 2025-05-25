@@ -3,6 +3,7 @@ package com.example.ro.services;
 import com.example.ro.dto.requestDTO.LinkDTO;
 import com.example.ro.dto.requestDTO.UpdateLinkDTO;
 import com.example.ro.dto.responseDTO.ApiError;
+import com.example.ro.dto.responseDTO.LinkOfTreeDTO;
 import com.example.ro.dto.responseDTO.PathStepDTO;
 import com.example.ro.dto.responseDTO.FamilyPathDTO;
 import com.example.ro.enumeration.Role;
@@ -263,20 +264,21 @@ public class FamilyLinkService {
         }
 
         List<FamilyLink> links = familyLinkRepository.findByFamilyTreeId(id);
-        List<PathStepDTO> pathStepDTOS = new ArrayList<>();
+        List<LinkOfTreeDTO> linkOfTreeDTOS = new ArrayList<>();
 
         for (FamilyLink link : links) {
-            PathStepDTO pathStepDTO = new PathStepDTO();
+            LinkOfTreeDTO linkOfTreeDTO = new LinkOfTreeDTO();
 
-            pathStepDTO.setRelationType(link.getRelationType());
-            pathStepDTO.setWeight(link.getWeight());
-            pathStepDTO.setFromPerson(link.getSource().getLastName() + " " + link.getSource().getFirstName());
-            pathStepDTO.setToPerson(link.getTarget().getLastName() + " " + link.getTarget().getFirstName());
+            linkOfTreeDTO.setId(link.getId());
+            linkOfTreeDTO.setRelationType(link.getRelationType());
+            linkOfTreeDTO.setWeight(link.getWeight());
+            linkOfTreeDTO.setId_source(link.getSource().getId());
+            linkOfTreeDTO.setId_target(link.getTarget().getId());
 
-            pathStepDTOS.add(pathStepDTO);
+            linkOfTreeDTOS.add(linkOfTreeDTO);
         }
 
-        apiError.setData(pathStepDTOS);
+        apiError.setData(linkOfTreeDTOS);
         apiError.setValue("200");
         apiError.setText("links get successfully");
 
