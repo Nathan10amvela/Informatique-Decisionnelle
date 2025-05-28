@@ -41,12 +41,12 @@ MODELS_CONFIG = {
     'Random Forest': {
         'model_name': 'RF',
         'param_grid': {
-            'n_estimators': [50, 100, 200, 300],
+            'n_estimators': [100, 200, 300, 500], #[50, 100, 200, 300],
             'max_depth': [None, 10, 20, 30],
             'min_samples_split': [2, 5, 10],
             'min_samples_leaf': [1, 2, 4],
             'bootstrap': [True, False],
-            'class_weight': [None, 'balanced', 'balanced_subsample']
+            'class_weight': [ 'balanced', 'balanced_subsample' , None,]
         }
     },
     'AdaBoost': {

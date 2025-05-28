@@ -91,7 +91,7 @@ def train_and_evaluate_models(X_train, X_test, X_train_scaled, X_test_scaled, y_
             tn_train, fp_train, fn_train, tp_train = train_conf_matrix.ravel()
         else:
             tn_train, fp_train, fn_train, tp_train = 0, 0, 0, 0
-            print(f"⚠️ Matrice de confusion de forme inattendue pour l'entraînement: {train_conf_matrix.shape}")
+            print(f" Matrice de confusion de forme inattendue pour l'entraînement: {train_conf_matrix.shape}")
         
         # Calcul des métriques d'entraînement
         train_accuracy = accuracy_score(y_train, y_train_pred)
@@ -213,7 +213,7 @@ def train_and_evaluate_models(X_train, X_test, X_train_scaled, X_test_scaled, y_
         }
         
         # Affichage des résultats de test (le plus important à surveiller)
-        print(f"✅ Résultats pour {name}:")
+        print(f" Résultats pour {name}:")
         print(f"   - Validation croisée ({cv_folds}-fold): {cv_score_mean:.4f} ± {cv_score_std:.4f}")
         print(f"   - Accuracy (entrainement/test): {train_accuracy:.4f}/{test_accuracy:.4f}")
         print(f"   - Precision (entrainement/test): {train_precision:.4f}/{test_precision:.4f}")
@@ -241,7 +241,7 @@ def create_ensemble_model(base_models, test_results, train_results, X_train_scal
         X_train_scaled, X_test_scaled: Données d'entraînement et de test
         y_train, y_test: Étiquettes d'entraînement et de test
     """
-    print("\n🔄 Création de modèles d'ensemble...")
+    print("\n Création de modèles d'ensemble...")
     
     # Filtrer les modèles qui supportent predict_proba pour le VotingClassifier
     prob_models = {}
@@ -257,7 +257,7 @@ def create_ensemble_model(base_models, test_results, train_results, X_train_scal
         )
         
         # Entraînement du modèle d'ensemble
-        print("⏳ Entraînement du Voting Classifier (soft)...")
+        print(" Entraînement du Voting Classifier (soft)...")
         voting_soft.fit(X_train_scaled, y_train)
         
         # --- Évaluation sur les données d'entraînement ---
@@ -377,7 +377,7 @@ def create_ensemble_model(base_models, test_results, train_results, X_train_scal
         }
         
         # Affichage des résultats
-        print(f"✅ Résultats pour Voting Ensemble:")
+        print(f" Résultats pour Voting Ensemble:")
         print(f"   - Accuracy (entrainement/test): {train_accuracy:.4f}/{test_accuracy:.4f}")
         print(f"   - Precision (entrainement/test): {train_precision:.4f}/{test_precision:.4f}")
         print(f"   - Recall (entrainement/test): {train_recall:.4f}/{test_recall:.4f}")
@@ -397,7 +397,7 @@ def create_ensemble_model(base_models, test_results, train_results, X_train_scal
             )
             
             # Entraînement du modèle
-            print("⏳ Entraînement du Stacking Classifier...")
+            print(" Entraînement du Stacking Classifier...")
             stacking.fit(X_train_scaled, y_train)
             
             # --- Évaluation sur les données d'entraînement ---
@@ -517,7 +517,7 @@ def create_ensemble_model(base_models, test_results, train_results, X_train_scal
             }
             
             # Affichage des résultats
-            print(f"✅ Résultats pour Stacking Ensemble:")
+            print(f" Résultats pour Stacking Ensemble:")
             print(f"   - Accuracy (entrainement/test): {train_accuracy_stack:.4f}/{test_accuracy_stack:.4f}")
             print(f"   - Precision (entrainement/test): {train_precision_stack:.4f}/{test_precision_stack:.4f}")
             print(f"   - Recall (entrainement/test): {train_recall_stack:.4f}/{test_recall_stack:.4f}")
@@ -526,7 +526,7 @@ def create_ensemble_model(base_models, test_results, train_results, X_train_scal
             print(f"   - Matrice de confusion (test): TN={tn_test_stack}, FP={fp_test_stack}, FN={fn_test_stack}, TP={tp_test_stack}")
         
         except Exception as e:
-            print(f"⚠️ Erreur lors de la création du Stacking Classifier: {e}")
+            print(f" Erreur lors de la création du Stacking Classifier: {e}")
     
     else:
         print("⚠️ Pas assez de modèles supportant predict_proba pour créer un ensemble")
@@ -542,7 +542,7 @@ def compare_models(results, feature_names):
     Returns:
         Nom du meilleur modèle selon le F1-score
     """
-    print("\n📊 Comparaison des performances des modèles:")
+    print("\n Comparaison des performances des modèles:")
     
     # Création d'un DataFrame pour la comparaison
     models_df = pd.DataFrame({
@@ -634,7 +634,7 @@ def compare_models(results, feature_names):
     best_model_name = models_df.loc[models_df['F1-Score'].idxmax(), 'Modèle']
     best_f1 = models_df['F1-Score'].max()
     
-    print(f"\n🏆 Le meilleur modèle selon le F1-Score est {best_model_name} avec un score de {best_f1:.4f}")
+    print(f"\n Le meilleur modèle selon le F1-Score est {best_model_name} avec un score de {best_f1:.4f}")
     
     # Analyse d'importance des caractéristiques pour les modèles compatibles
     for model_name, model_data in results.items():
@@ -678,7 +678,7 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
     else:
         # Si le modèle est un ensemble, utiliser une configuration par défaut
         if 'Ensemble' in best_model_name:
-            print("ℹ️ Optimisation d'un modèle d'ensemble...")
+            print("ℹ Optimisation d'un modèle d'ensemble...")
             # Les ensembles nécessitent une approche spéciale pour l'optimisation
             # Pour simplifier, on retourne directement le modèle ensemble sans optimisation
             from sklearn.base import clone
@@ -742,7 +742,7 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
                 'y_proba': y_proba
             }
             
-            print(f"✅ Modèle {best_model_name} entraîné avec succès!")
+            print(f" Modèle {best_model_name} entraîné avec succès!")
             print(f"   - Accuracy: {metrics['accuracy']:.4f}")
             print(f"   - Precision: {metrics['precision']:.4f}")
             print(f"   - Recall: {metrics['recall']:.4f}")
@@ -779,7 +779,7 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
     cv_folds = EVALUATION_CONFIG.get('cv_folds', 5)
     scoring = EVALUATION_CONFIG.get('scoring', 'f1')
     
-    print(f"⏳ Recherche des meilleurs hyperparamètres avec {cv_folds}-fold CV...")
+    print(f" Recherche des meilleurs hyperparamètres avec {cv_folds}-fold CV...")
     grid_search = GridSearchCV(
         base_model,
         param_grid,
@@ -791,7 +791,7 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
     
     grid_search.fit(X_train_scaled, y_train)
     
-    print(f"\n✅ Optimisation terminée!")
+    print(f"\n Optimisation terminée!")
     print(f"Meilleurs paramètres: {grid_search.best_params_}")
     print(f"Meilleur score CV ({scoring}): {grid_search.best_score_:.4f}")
     
@@ -853,7 +853,7 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
     }
     
     # Affichage des résultats
-    print(f"\n📊 Performance du modèle optimisé sur l'ensemble de test:")
+    print(f"\n Performance du modèle optimisé sur l'ensemble de test:")
     print(f"   - Accuracy: {accuracy:.4f}")
     print(f"   - Precision: {precision:.4f}")
     print(f"   - Recall: {recall:.4f}")
@@ -890,3 +890,618 @@ def optimize_best_model(best_model_name, X_train, X_test, X_train_scaled, X_test
         plt.close()
     
     return best_model, metrics
+
+
+
+# Ajoutez cette fonction à la fin du fichier informatiqueDecisionnelle/modeling/train.py
+
+def create_precision_focused_ensemble(base_models, X_train_scaled, X_test_scaled, y_train, y_test, class_weights=None):
+    """
+    Crée un ensemble optimisé pour la précision
+    
+    Args:
+        base_models: Dictionnaire des modèles de base
+        X_train_scaled, X_test_scaled: Données normalisées
+        y_train, y_test: Étiquettes
+        class_weights: Dictionnaire des poids des classes
+        
+    Returns:
+        Modèle d'ensemble optimisé pour la précision, métriques
+    """
+    print("\n Création d'un ensemble optimisé pour la précision...")
+    
+    # Importer XGBoost si disponible
+    try:
+        from xgboost import XGBClassifier
+        has_xgboost = True
+    except ImportError:
+        has_xgboost = False
+        print("⚠️ XGBoost non disponible, utilisation des modèles de base uniquement")
+    
+    # Sélectionner uniquement les meilleurs modèles pour la précision
+    selected_models = {}
+    for name, model in base_models.items():
+        # Prédictions sur l'ensemble d'entraînement
+        y_pred = model.predict(X_train_scaled)
+        precision = precision_score(y_train, y_pred)
+        
+        # Inclure seulement les modèles avec une bonne précision
+        if precision > 0.75:
+            selected_models[name] = model
+            print(f"- Sélection du modèle {name} (précision: {precision:.4f})")
+    
+    if len(selected_models) < 2:
+        print("⚠️ Trop peu de modèles avec bonne précision, inclusion de tous les modèles")
+        selected_models = base_models.copy()
+    
+    # 1. Créer un meta-model optimisé pour la précision
+    # Le meta-model doit être calibré pour maximiser la précision
+    
+    if has_xgboost:
+        # XGBoost avec configuration axée sur la précision
+        meta_model = XGBClassifier(
+            learning_rate=0.05,
+            n_estimators=300,
+            max_depth=3,
+            min_child_weight=3,  # Augmenter pour réduire les faux positifs
+            gamma=0.2,           # Augmenter pour plus de régularisation
+            subsample=0.8,
+            colsample_bytree=0.8,
+            objective='binary:logistic',
+            scale_pos_weight=0.8,  # < 1 pour favoriser la précision sur les classes positives
+            random_state=42
+        )
+    else:
+        # Random Forest avec paramètres axés sur la précision
+        meta_model = RandomForestClassifier(
+            n_estimators=300,
+            max_depth=5,
+            min_samples_split=5,  # Augmenter pour plus de stabilité
+            min_samples_leaf=3,   # Augmenter pour réduire les faux positifs
+            max_features='sqrt',
+            bootstrap=True,
+            random_state=42
+        )
+    
+    # 2. Préparer les prédictions des modèles de base pour l'entraînement du meta-model
+    from sklearn.model_selection import KFold
+    
+    # Utiliser validation croisée 5-fold pour obtenir des prédictions non biaisées
+    kf = KFold(n_splits=5, shuffle=True, random_state=42)
+    
+    # Pour stocker les prédictions des modèles de base
+    meta_features_train = np.zeros((X_train_scaled.shape[0], len(selected_models)))
+    meta_features_test = np.zeros((X_test_scaled.shape[0], len(selected_models)))
+    
+    # Génération des meta-features
+    for i, (name, model) in enumerate(selected_models.items()):
+        # Pour les données de test, on peut prédire directement
+        if hasattr(model, 'predict_proba'):
+            meta_features_test[:, i] = model.predict_proba(X_test_scaled)[:, 1]
+        else:
+            meta_features_test[:, i] = model.predict(X_test_scaled)
+        
+        # Pour les données d'entraînement, utiliser la validation croisée
+        meta_preds = np.zeros(X_train_scaled.shape[0])
+        
+        for train_idx, val_idx in kf.split(X_train_scaled):
+            # Cloner le modèle pour l'entraîner sur chaque fold
+            from sklearn.base import clone
+            clone_model = clone(model)
+            
+            # Entraînement sur le sous-ensemble
+            clone_model.fit(X_train_scaled[train_idx], y_train[train_idx])
+            
+            # Prédiction sur la validation
+            if hasattr(clone_model, 'predict_proba'):
+                meta_preds[val_idx] = clone_model.predict_proba(X_train_scaled[val_idx])[:, 1]
+            else:
+                meta_preds[val_idx] = clone_model.predict(X_train_scaled[val_idx])
+        
+        # Stocker les prédictions comme features
+        meta_features_train[:, i] = meta_preds
+    
+    # 3. Entraîner le meta-model avec seuil de décision optimisé pour la précision
+    
+    print("- Entraînement du meta-modèle optimisé pour la précision...")
+    meta_model.fit(meta_features_train, y_train)
+    
+    # Prédiction initiale
+    if hasattr(meta_model, 'predict_proba'):
+        y_proba = meta_model.predict_proba(meta_features_test)[:, 1]
+        
+        # Recherche du seuil optimal pour maximiser la précision tout en maintenant un bon rappel
+        thresholds = np.linspace(0.3, 0.7, 20)
+        best_f2 = 0  # F2-score donne plus de poids au rappel qu'à la précision
+        best_threshold = 0.5
+        
+        for threshold in thresholds:
+            y_pred_t = (y_proba >= threshold).astype(int)
+            prec = precision_score(y_test, y_pred_t)
+            rec = recall_score(y_test, y_pred_t)
+            
+            # F2-score: équilibre entre précision et rappel avec plus de poids au rappel
+            f2 = (5 * prec * rec) / (4 * prec + rec) if (prec + rec) > 0 else 0
+            
+            if f2 > best_f2:
+                best_f2 = f2
+                best_threshold = threshold
+        
+        print(f"- Seuil optimal pour la décision: {best_threshold:.3f}")
+        y_pred = (y_proba >= best_threshold).astype(int)
+    else:
+        y_pred = meta_model.predict(meta_features_test)
+        y_proba = None
+    
+    # 4. Évaluation du modèle
+    accuracy = accuracy_score(y_test, y_pred)
+    precision = precision_score(y_test, y_pred)
+    recall = recall_score(y_test, y_pred)
+    f1 = f1_score(y_test, y_pred)
+    
+    # Calcul de l'AUC si disponible
+    if y_proba is not None:
+        fpr, tpr, _ = roc_curve(y_test, y_proba)
+        roc_auc = auc(fpr, tpr)
+        has_proba = True
+    else:
+        fpr, tpr, roc_auc = None, None, None
+        has_proba = False
+    
+    # Matrice de confusion
+    conf_matrix = confusion_matrix(y_test, y_pred)
+    
+    # Extraire TP, TN, FP, FN
+    if conf_matrix.shape == (2, 2):
+        tn, fp, fn, tp = conf_matrix.ravel()
+    else:
+        tn, fp, fn, tp = 0, 0, 0, 0
+    
+    # Résultats
+    print(f" Ensemble optimisé pour la précision:")
+    print(f"   - Accuracy: {accuracy:.4f}")
+    print(f"   - Precision: {precision:.4f}")
+    print(f"   - Recall: {recall:.4f}")
+    print(f"   - F1-score: {f1:.4f}")
+    if has_proba:
+        print(f"   - AUC: {roc_auc:.4f}")
+    print(f"   - Matrice de confusion: TN={tn}, FP={fp}, FN={fn}, TP={tp}")
+    
+    # Visualisation de la courbe de précision en fonction du seuil
+    if y_proba is not None:
+        plt.figure(figsize=(10, 6))
+        precisions = []
+        recalls = []
+        thresholds_viz = np.linspace(0.1, 0.9, 50)
+        
+        for threshold in thresholds_viz:
+            y_pred_t = (y_proba >= threshold).astype(int)
+            prec = precision_score(y_test, y_pred_t)
+            rec = recall_score(y_test, y_pred_t)
+            precisions.append(prec)
+            recalls.append(rec)
+        
+        plt.plot(thresholds_viz, precisions, 'b-', label='Precision')
+        plt.plot(thresholds_viz, recalls, 'r-', label='Recall')
+        plt.axvline(x=best_threshold, color='g', linestyle='--', label=f'Seuil optimal: {best_threshold:.3f}')
+        plt.xlabel('Seuil de décision')
+        plt.ylabel('Score')
+        plt.title('Précision et Rappel en fonction du seuil de décision')
+        plt.legend()
+        plt.grid(True, alpha=0.3)
+        plt.savefig('reports/figures/precision_threshold_optimization.png')
+        plt.close()
+    
+    # Stockage des métriques
+    metrics = {
+        'model': meta_model,
+        'base_models': selected_models,
+        'meta_features_train': meta_features_train,
+        'meta_features_test': meta_features_test,
+        'accuracy': accuracy,
+        'precision': precision,
+        'recall': recall,
+        'f1': f1,
+        'confusion_matrix': conf_matrix,
+        'tn': tn, 'fp': fp, 'fn': fn, 'tp': tp,
+        'has_proba': has_proba,
+        'auc': roc_auc if has_proba else 0,
+        'fpr': fpr,
+        'tpr': tpr,
+        'y_test': y_test,
+        'y_pred': y_pred,
+        'y_proba': y_proba,
+        'threshold': best_threshold if y_proba is not None else None
+    }
+    
+    return meta_model, metrics
+
+
+def train_regularized_models(X_train, X_test, y_train, y_test, feature_names):
+    """
+    Entraîne des modèles avec une forte régularisation pour éviter le surapprentissage
+    
+    Args:
+        X_train, X_test: Données préparées
+        y_train, y_test: Étiquettes
+        feature_names: Noms des caractéristiques
+    
+    Returns:
+        test_results, train_results: Résultats d'évaluation
+    """
+    print("\n Entraînement des modèles avec régularisation...")
+    
+    # Définition des modèles avec forte régularisation
+    models = {
+        'Logistic Regression': LogisticRegression(
+            C=0.1,                 # Forte régularisation L2
+            penalty='l2',
+            solver='liblinear',
+            max_iter=2000,
+            random_state=42
+        ),
+        'Decision Tree': DecisionTreeClassifier(
+            max_depth=3,           # Profondeur très limitée
+            min_samples_split=10,  # Valeur élevée pour éviter les splits trop spécifiques
+            min_samples_leaf=5,    # Minimum de points dans chaque feuille
+            random_state=42
+        ),
+        'KNN': KNeighborsClassifier(
+            n_neighbors=11,        # Valeur plus élevée, moins sensible aux outliers
+            weights='uniform',     # Poids uniforme plutôt que distance
+            metric='euclidean'
+        ),
+        'Random Forest': RandomForestClassifier(
+            n_estimators=100,      # Nombre modéré d'arbres
+            max_depth=4,           # Profondeur très limitée
+            min_samples_split=10,
+            min_samples_leaf=5,
+            max_features='sqrt',   # Limiter les caractéristiques par split
+            bootstrap=True,
+            random_state=42
+        ),
+        'AdaBoost': AdaBoostClassifier(
+            n_estimators=50,       # Moins d'estimateurs
+            learning_rate=0.01,    # Taux d'apprentissage très bas
+            random_state=42
+        ),
+        'SVM': SVC(
+            C=0.5,                 # Forte régularisation
+            kernel='rbf',
+            gamma='scale',
+            probability=True,
+            random_state=42
+        )
+    }
+    
+    # Évaluation avec validation croisée
+    test_results = {}
+    train_results = {}
+    
+    for name, model in models.items():
+        print(f"\n Entraînement et évaluation de {name}...")
+        
+        # Validation croisée pour une évaluation plus fiable
+        cv_scores = cross_val_score(model, X_train, y_train, cv=5, scoring='f1')
+        cv_mean = cv_scores.mean()
+        cv_std = cv_scores.std()
+        
+        # Entraînement sur tout l'ensemble d'entraînement
+        model.fit(X_train, y_train)
+        
+        # Évaluation sur entraînement
+        y_train_pred = model.predict(X_train)
+        
+        train_accuracy = accuracy_score(y_train, y_train_pred)
+        train_precision = precision_score(y_train, y_train_pred)
+        train_recall = recall_score(y_train, y_train_pred)
+        train_f1 = f1_score(y_train, y_train_pred)
+        
+        train_cm = confusion_matrix(y_train, y_train_pred)
+        if len(train_cm) == 2:
+            tn, fp, fn, tp = train_cm.ravel()
+        else:
+            tn, fp, fn, tp = 0, 0, 0, 0
+        
+        # Probabilités pour ROC (si disponible)
+        train_has_proba = hasattr(model, "predict_proba")
+        if train_has_proba:
+            y_train_proba = model.predict_proba(X_train)[:, 1]
+            train_fpr, train_tpr, _ = roc_curve(y_train, y_train_proba)
+            train_auc = auc(train_fpr, train_tpr)
+        else:
+            train_fpr, train_tpr, train_auc = None, None, None
+            y_train_proba = None
+        
+        # Évaluation sur test
+        y_test_pred = model.predict(X_test)
+        
+        test_accuracy = accuracy_score(y_test, y_test_pred)
+        test_precision = precision_score(y_test, y_test_pred)
+        test_recall = recall_score(y_test, y_test_pred)
+        test_f1 = f1_score(y_test, y_test_pred)
+        
+        test_cm = confusion_matrix(y_test, y_test_pred)
+        if len(test_cm) == 2:
+            test_tn, test_fp, test_fn, test_tp = test_cm.ravel()
+        else:
+            test_tn, test_fp, test_fn, test_tp = 0, 0, 0, 0
+        
+        # Probabilités pour ROC (si disponible)
+        test_has_proba = hasattr(model, "predict_proba")
+        if test_has_proba:
+            y_test_proba = model.predict_proba(X_test)[:, 1]
+            test_fpr, test_tpr, _ = roc_curve(y_test, y_test_proba)
+            test_auc = auc(test_fpr, test_tpr)
+        else:
+            test_fpr, test_tpr, test_auc = None, None, None
+            y_test_proba = None
+        
+        # Stockage des résultats d'entraînement
+        train_results[name] = {
+            'model': model,
+            'cv_score_mean': cv_mean,
+            'cv_score_std': cv_std,
+            'accuracy': train_accuracy,
+            'precision': train_precision,
+            'recall': train_recall,
+            'f1': train_f1,
+            'confusion_matrix': train_cm,
+            'tn': tn, 'fp': fp, 'fn': fn, 'tp': tp,
+            'has_proba': train_has_proba,
+            'auc': train_auc if train_has_proba else 0,
+            'fpr': train_fpr,
+            'tpr': train_tpr,
+            'y_true': y_train,
+            'y_pred': y_train_pred,
+            'y_proba': y_train_proba
+        }
+        
+        # Stockage des résultats de test
+        test_results[name] = {
+            'model': model,
+            'cv_score_mean': cv_mean,
+            'cv_score_std': cv_std,
+            'accuracy': test_accuracy,
+            'precision': test_precision,
+            'recall': test_recall,
+            'f1': test_f1,
+            'confusion_matrix': test_cm,
+            'tn': test_tn, 'fp': test_fp, 'fn': test_fn, 'tp': test_tp,
+            'has_proba': test_has_proba,
+            'auc': test_auc if test_has_proba else 0,
+            'fpr': test_fpr,
+            'tpr': test_tpr,
+            'y_test': y_test,
+            'y_pred': y_test_pred,
+            'y_proba': y_test_proba
+        }
+        
+        # Affichage des résultats
+        print(f" Résultats pour {name}:")
+        print(f"   - CV (5-fold): {cv_mean:.4f} ± {cv_std:.4f}")
+        print(f"   - Train : Accuracy: {train_accuracy:.4f}, Precision: {train_precision:.4f}, Recall: {train_recall:.4f}, F1: {train_f1:.4f}")
+        print(f"   - Test  : Accuracy: {test_accuracy:.4f}, Precision: {test_precision:.4f}, Recall: {test_recall:.4f}, F1: {test_f1:.4f}")
+        print(f"   - Écart  : Accuracy: {train_accuracy-test_accuracy:.4f}, F1: {train_f1-test_f1:.4f}")
+        
+        if train_has_proba:
+            print(f"   - AUC   : Train: {train_auc:.4f}, Test: {test_auc:.4f}")
+    
+    # Ajouter un modèle d'ensemble simple basé sur le vote
+    from sklearn.ensemble import VotingClassifier
+    
+    # Sélectionner uniquement les modèles avec predict_proba
+    prob_models = {}
+    for name, model in models.items():
+        if hasattr(model, 'predict_proba'):
+            prob_models[name] = model
+    
+    if len(prob_models) >= 3:
+        print("\n Création d'un modèle d'ensemble simple par vote...")
+        
+        ensemble = VotingClassifier(
+            estimators=[(name, model) for name, model in prob_models.items()],
+            voting='soft'
+        )
+        
+        ensemble.fit(X_train, y_train)
+        
+        # Évaluation sur entraînement
+        y_train_pred = ensemble.predict(X_train)
+        train_accuracy = accuracy_score(y_train, y_train_pred)
+        train_precision = precision_score(y_train, y_train_pred)
+        train_recall = recall_score(y_train, y_train_pred)
+        train_f1 = f1_score(y_train, y_train_pred)
+        
+        # Évaluation sur test
+        y_test_pred = ensemble.predict(X_test)
+        test_accuracy = accuracy_score(y_test, y_test_pred)
+        test_precision = precision_score(y_test, y_test_pred)
+        test_recall = recall_score(y_test, y_test_pred)
+        test_f1 = f1_score(y_test, y_test_pred)
+        
+        # Probabilités
+        y_train_proba = ensemble.predict_proba(X_train)[:, 1]
+        train_fpr, train_tpr, _ = roc_curve(y_train, y_train_proba)
+        train_auc = auc(train_fpr, train_tpr)
+        
+        y_test_proba = ensemble.predict_proba(X_test)[:, 1]
+        test_fpr, test_tpr, _ = roc_curve(y_test, y_test_proba)
+        test_auc = auc(test_fpr, test_tpr)
+        
+        # Matrices de confusion
+        train_cm = confusion_matrix(y_train, y_train_pred)
+        if len(train_cm) == 2:
+            tn, fp, fn, tp = train_cm.ravel()
+        else:
+            tn, fp, fn, tp = 0, 0, 0, 0
+            
+        test_cm = confusion_matrix(y_test, y_test_pred)
+        if len(test_cm) == 2:
+            test_tn, test_fp, test_fn, test_tp = test_cm.ravel()
+        else:
+            test_tn, test_fp, test_fn, test_tp = 0, 0, 0, 0
+        
+        # Stocker les résultats
+        train_results['Voting Ensemble'] = {
+            'model': ensemble,
+            'cv_score_mean': np.mean([train_results[m]['cv_score_mean'] for m in prob_models]),
+            'cv_score_std': np.mean([train_results[m]['cv_score_std'] for m in prob_models]),
+            'accuracy': train_accuracy,
+            'precision': train_precision,
+            'recall': train_recall,
+            'f1': train_f1,
+            'confusion_matrix': train_cm,
+            'tn': tn, 'fp': fp, 'fn': fn, 'tp': tp,
+            'has_proba': True,
+            'auc': train_auc,
+            'fpr': train_fpr,
+            'tpr': train_tpr,
+            'y_true': y_train,
+            'y_pred': y_train_pred,
+            'y_proba': y_train_proba
+        }
+        
+        test_results['Voting Ensemble'] = {
+            'model': ensemble,
+            'cv_score_mean': np.mean([test_results[m]['cv_score_mean'] for m in prob_models]),
+            'cv_score_std': np.mean([test_results[m]['cv_score_std'] for m in prob_models]),
+            'accuracy': test_accuracy,
+            'precision': test_precision,
+            'recall': test_recall,
+            'f1': test_f1,
+            'confusion_matrix': test_cm,
+            'tn': test_tn, 'fp': test_fp, 'fn': test_fn, 'tp': test_tp,
+            'has_proba': True,
+            'auc': test_auc,
+            'fpr': test_fpr,
+            'tpr': test_tpr,
+            'y_test': y_test,
+            'y_pred': y_test_pred,
+            'y_proba': y_test_proba
+        }
+        
+        print(f" Résultats pour Voting Ensemble:")
+        print(f"   - Train : Accuracy: {train_accuracy:.4f}, Precision: {train_precision:.4f}, Recall: {train_recall:.4f}, F1: {train_f1:.4f}")
+        print(f"   - Test  : Accuracy: {test_accuracy:.4f}, Precision: {test_precision:.4f}, Recall: {test_recall:.4f}, F1: {test_f1:.4f}")
+        print(f"   - Écart  : Accuracy: {train_accuracy-test_accuracy:.4f}, F1: {train_f1-test_f1:.4f}")
+        print(f"   - AUC   : Train: {train_auc:.4f}, Test: {test_auc:.4f}")
+    
+    return test_results, train_results
+
+def select_best_model_by_generalization(test_results, train_results, feature_names):
+    """
+    Sélectionne le meilleur modèle basé sur la généralisation plutôt que sur la performance pure
+    
+    Args:
+        test_results, train_results: Dictionnaires de résultats
+        feature_names: Noms des caractéristiques
+        
+    Returns:
+        Nom du meilleur modèle
+    """
+    import numpy as np
+    import pandas as pd
+    import matplotlib.pyplot as plt
+    import os
+    
+    print("\n Évaluation des modèles basée sur la généralisation:")
+    
+    # Création des données pour comparer
+    comparison_data = []
+    
+    for name in test_results.keys():
+        train_metrics = train_results[name]
+        test_metrics = test_results[name]
+        
+        # Calcul des écarts entre train et test (mesure de surapprentissage)
+        accuracy_gap = train_metrics['accuracy'] - test_metrics['accuracy']
+        f1_gap = train_metrics['f1'] - test_metrics['f1']
+        
+        # Score composite valorisant à la fois performance et généralisation
+        # Formula: test_f1 - 0.7 * f1_gap 
+        # Cette formule pénalise fortement le surapprentissage tout en récompensant la performance sur test
+        generalization_score = test_metrics['f1'] - 0.7 * f1_gap
+        
+        comparison_data.append({
+            'Modèle': name,
+            'Accuracy (train)': train_metrics['accuracy'],
+            'Accuracy (test)': test_metrics['accuracy'],
+            'F1 (train)': train_metrics['f1'],
+            'F1 (test)': test_metrics['f1'],
+            'Écart Accuracy': accuracy_gap,
+            'Écart F1': f1_gap,
+            'Score Généralisation': generalization_score
+        })
+    
+    # Création du DataFrame et tri
+    comparison_df = pd.DataFrame(comparison_data)
+    comparison_df = comparison_df.sort_values('Score Généralisation', ascending=False)
+    
+    print(comparison_df)
+    
+    # Visualisation des écarts entre train et test
+    plt.figure(figsize=(12, 6))
+    
+    # Limiter aux 5 premiers modèles pour la lisibilité
+    plot_df = comparison_df.head(5)
+    
+    # Graphique barres empilées pour F1
+    plt.subplot(1, 2, 1)
+    plt.bar(plot_df['Modèle'], plot_df['F1 (test)'], label='F1 (test)')
+    plt.bar(plot_df['Modèle'], plot_df['Écart F1'], bottom=plot_df['F1 (test)'], 
+            label='Écart F1', color='lightgray', alpha=0.7)
+    plt.title('F1-Score et écart Train/Test')
+    plt.legend()
+    plt.xticks(rotation=45)
+    
+    # Graphique des scores de généralisation
+    plt.subplot(1, 2, 2)
+    plt.bar(plot_df['Modèle'], plot_df['Score Généralisation'], color='green')
+    plt.title('Score de Généralisation')
+    plt.xticks(rotation=45)
+    
+    plt.tight_layout()
+    os.makedirs('reports/figures', exist_ok=True)
+    plt.savefig('reports/figures/model_generalization_comparison.png')
+    plt.close()
+    
+    # Sélection du meilleur modèle selon le score de généralisation
+    best_model_name = comparison_df.iloc[0]['Modèle']
+    best_gen_score = comparison_df.iloc[0]['Score Généralisation']
+    
+    print(f"\n Meilleur modèle selon la généralisation: {best_model_name}")
+    print(f"   Score de généralisation: {best_gen_score:.4f}")
+    print(f"   F1 test: {comparison_df.iloc[0]['F1 (test)']:.4f}")
+    print(f"   Écart F1: {comparison_df.iloc[0]['Écart F1']:.4f}")
+    
+    # Afficher l'importance des caractéristiques si disponible
+    best_model = test_results[best_model_name]['model']
+    
+    if hasattr(best_model, 'feature_importances_'):
+        print("\n Importance des caractéristiques du meilleur modèle:")
+        
+        # Si c'est un VotingClassifier
+        if hasattr(best_model, 'estimators_') and hasattr(best_model, 'named_estimators_'):
+            # VotingClassifier a des named_estimators_
+            for name, estimator in best_model.named_estimators_.items():
+                if hasattr(estimator, 'feature_importances_'):
+                    print(f"\n   Importance des caractéristiques pour {name}:")
+                    importances = estimator.feature_importances_
+                    indices = np.argsort(importances)[::-1]
+                    
+                    for i, idx in enumerate(indices):
+                        if i < len(feature_names):  # Vérification pour éviter les erreurs d'index
+                            print(f"   {i+1}. {feature_names[idx]}: {importances[idx]:.4f}")
+                    break
+        
+        # Si c'est un RandomForestClassifier ou autre modèle avec feature_importances_
+        elif hasattr(best_model, 'feature_importances_'):
+            importances = best_model.feature_importances_
+            indices = np.argsort(importances)[::-1]
+            
+            for i, idx in enumerate(indices):
+                if i < len(feature_names):  # Vérification pour éviter les erreurs d'index
+                    print(f"   {i+1}. {feature_names[idx]}: {importances[idx]:.4f}")
+    
+    return best_model_name
