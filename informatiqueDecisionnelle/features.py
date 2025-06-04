@@ -56,8 +56,9 @@ def prepare_data(train_df, test_df=None, is_single_dataset=False, feature_engine
     
     # Équilibrage des classes (si activé)
     if balance_classes:
-        X_train, y_train = balance_training_data(X_train, y_train)
-    
+      #  X_train, y_train = balance_training_data(X_train, y_train)
+        X_train, y_train, _ = balance_training_data(X_train, y_train)
+
     # Sélection de caractéristiques (si activée)
     if feature_selection:
         X_train, X_test = select_features(X_train, X_test, y_train)
