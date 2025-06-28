@@ -145,8 +145,8 @@ def main():
     
     # 1. Chargement des datasets
     print("\n Chargement des datasets...")
-    train_path = 'data/raw/heart_70pct.csv'
-    test_path = 'data/raw/heart_30pct.csv'
+    train_path = 'data/raw/Heart_disease_statlog_train_0.675pct.csv'
+    test_path = 'data/raw/Heart_disease_statlog_test_0.325pct.csv'
     
     # Vérifier si les fichiers existent déjà
     if not (os.path.exists(train_path) and os.path.exists(test_path)):
@@ -154,8 +154,8 @@ def main():
         from split_data import split_and_save_data
         
         train_path, test_path = split_and_save_data(
-            'data/raw/heart.csv', 
-            train_ratio=0.615
+            'data/raw/Heart_disease_statlog.csv', 
+            train_ratio=0.675
         )
     
     # Chargement des datasets séparés

@@ -40,7 +40,7 @@ def main():
     y = dataset['target']
     
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.325, random_state=42, stratify=y
+        X, y, test_size=0.325, random_state=42, stratify=y          #0.325
     )
     
     print(f"Division train/test: {len(X_train)} échantillons d'entraînement, {len(X_test)} échantillons de test")
