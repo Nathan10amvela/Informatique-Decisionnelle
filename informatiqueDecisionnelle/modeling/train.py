@@ -1,3 +1,5 @@
+#train.py
+
 """
 Module pour l'entraînement et l'évaluation des modèles
 """
@@ -1151,27 +1153,27 @@ def train_regularized_models(X_train, X_test, y_train, y_test, feature_names):
             weights='uniform',     # Poids uniforme plutôt que distance
             metric='euclidean'
         ),
-        'Random Forest': RandomForestClassifier(
-            n_estimators=100,      # Nombre modéré d'arbres
-            max_depth=4,           # Profondeur très limitée
-            min_samples_split=10,
-            min_samples_leaf=5,
-            max_features='sqrt',   # Limiter les caractéristiques par split
-            bootstrap=True,
-            random_state=42
-        ),
-        'AdaBoost': AdaBoostClassifier(
-            n_estimators=50,       # Moins d'estimateurs
-            learning_rate=0.01,    # Taux d'apprentissage très bas
-            random_state=42
-        ),
-        'SVM': SVC(
-            C=0.5,                 # Forte régularisation
-            kernel='rbf',
-            gamma='scale',
-            probability=True,
-            random_state=42
-        )
+        # 'Random Forest': RandomForestClassifier(
+        #     n_estimators=100,      # Nombre modéré d'arbres
+        #     max_depth=4,           # Profondeur très limitée
+        #     min_samples_split=10,
+        #     min_samples_leaf=5,
+        #     max_features='sqrt',   # Limiter les caractéristiques par split
+        #     bootstrap=True,
+        #     random_state=42
+        # ),
+            'AdaBoost': AdaBoostClassifier(
+                n_estimators=50,       # Moins d'estimateurs
+                learning_rate=0.01,    # Taux d'apprentissage très bas
+                random_state=42
+            ),
+        # 'SVM': SVC(
+        #     C=0.5,                 # Forte régularisation
+        #     kernel='rbf',
+        #     gamma='scale',
+        #     probability=True,
+        #     random_state=42
+        # )
     }
     
     # Évaluation avec validation croisée
@@ -1419,9 +1421,9 @@ def select_best_model_by_generalization(test_results, train_results, feature_nam
         f1_gap = train_metrics['f1'] - test_metrics['f1']
         
         # Score composite valorisant à la fois performance et généralisation
-        # Formula: test_f1 - 0.7 * f1_gap 
+        # Formula: test_f1 - 0.6 * f1_gap 
         # Cette formule pénalise fortement le surapprentissage tout en récompensant la performance sur test
-        generalization_score = test_metrics['f1'] - 0.7 * f1_gap
+        generalization_score = test_metrics['f1'] - 0.4 * f1_gap
         
         comparison_data.append({
             'Modèle': name,

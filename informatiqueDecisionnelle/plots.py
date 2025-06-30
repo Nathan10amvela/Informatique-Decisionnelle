@@ -1,3 +1,5 @@
+#plots.py
+
 """
 Module pour la création de visualisations et de rapports
 """

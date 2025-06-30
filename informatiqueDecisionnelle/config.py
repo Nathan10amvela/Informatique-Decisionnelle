@@ -1,3 +1,5 @@
+#config.py
+""
 """
 Module de configuration pour le projet de prédiction des maladies cardiaques
 """
